@@ -1,0 +1,38 @@
+---
+- name: Build the User Service Docker image
+  docker_image:
+    name: user-service
+    tag: latest
+    source: build
+    build:
+      path: "{{ playbook_dir }}/../microservices/user-service"
+  become: yes
+
+- name: Run the User Service container
+  docker_container:
+    name: user_service_container
+    image: user-service:latest
+    state: started
+    restart_policy: always
+    published_ports:
+      - "5000:5000"
+  become: yes
+
+- name: Build the Product Service Docker image
+  docker_image:
+    name: product-service
+    tag: latest
+    source: build
+    build:
+      path: "{{ playbook_dir }}/../microservices/product-service"
+  become: yes
+
+- name: Run the Product Service container
+  docker_container:
+    name: product_service_container
+    image: product-service:latest
+    state: started
+    restart_policy: always
+    published_ports:
+      - "5001:5001"
+  become: yes
